@@ -1,5 +1,7 @@
-data/
+data/raw/
 .venv/
+_jev-in-pausa/
+studio-back-front-end/
 __pycache__/
 .ipynb_checkpoints/
 *.duckdb
