@@ -2,10 +2,10 @@
 
 - **Dataset:** Brazilian E-Commerce Public Dataset by Olist
 - **Source:** Kaggle — https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
-- **Downloaded:** 2026-10-08 (archive.zip, ~45 MB; Kaggle account required)
 - **Version:** current Kaggle version (no. 2), last updated 2021-10-01
-- **Raw files:** the nine CSV files kept in `data/raw/` — not committed to Git (see `.gitignore`)
+- **Raw files:** the nine CSV files kept in `data/raw/` — not committed to Git (see `.gitignore` and `data/README.txt` for download instructions)
 - **License:** CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/
+- **Redistribution:** the dataset is not redistributed in this repository; download it from the official source.
 
 ## License conditions
 

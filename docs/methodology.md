@@ -1,10 +1,10 @@
 # Methodology — Olist Marketplace Performance
 
-> Status: draft (2026-10-06)
+> Status: living document — updated 2026-10-31
 
 ## Project overview
 
-Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Olist** (Kaggle): about 100,000 anonymized orders from 2016 to 2018, in several linked tables (orders, items, payments, reviews, products, customers). Tools: SQL, Python, Power BI.
+Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Olist** (Kaggle): about 100,000 anonymized orders from 2016 to 2018, in several linked tables (orders, items, payments, reviews, products, customers). Tools: Python/pandas.
 
 ## Simulated business brief
 
@@ -28,17 +28,43 @@ Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Ol
 ## Data source
 
 [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — CC BY-NC-SA 4.0.
+Download instructions: `data/README.txt`; licence details: `data_source_and_license.md`.
+
+## Data quality
+
+Missing values, anomalies and the main analysis period are documented in `data_quality.md`; every number there is reproduced by the scripts in `Pandas_Analysis/` (run `run_checks.py`).
+
+## Populations and definitions
+
+- **Sales population:** delivered orders in the main period (2017-01 → 2018-08) — **96,211 orders**. The sales summary also shows 96,478 delivered orders across the full dataset as context, clearly labelled.
+- **Service population:** delivered orders in the main period with an actual delivery date — **96,203 deliveries**. Orders marked delivered without a delivery date are excluded from delivery-time and punctuality indicators.
+- **Experience population:** evaluable deliveries matched to one review per order — **95,560 deliveries**.
+- **One review per order:** when an order has several reviews, keep the most recent by answer timestamp, then creation date, then review_id (missing dates last).
+- **Low score:** a review score of **1 or 2**.
+- **State comparison:** a state enters the punctuality-vs-score table only with at least **100 reviews in each group** (on time and late).
+- **Time measures:** delivery time is counted in whole 24-hour days between purchase and delivery; punctuality compares **calendar dates** (delivered date vs estimated date).
+- **Reviews before delivery:** reviews answered before the delivery date (4,648; 4,471 in late orders) are kept and reported separately, because they can express the wait itself rather than the final experience.
+- **Category counts:** orders per category are not additive — one order can contain items from different categories; only the merchandise value is additive.
+
+## Currency conversion (USD)
+
+Analysis values stay in **BRL** (the dataset currency); USD figures are a declared derived view.
+
+- **Source:** Banco Central do Brasil (BCB), public API, SGS series **PTAX 1** (US dollar, selling rate, daily), retrieved on **2026-10-20** from `https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados`.
+- **Convention:** semester average of the daily quotations; USD-per-BRL rate = 1 / average PTAX; `usd_value_semester = order_value × rate`, rounded to two decimals. Semesters: 2016-07, 2017-01, 2017-07, 2018-01, 2018-07 (rates stored in `Pandas_Analysis/convert_semester_currencies.py`).
+- **Rounding:** semester rates are stored rounded to four decimals; converted amounts are then rounded to two decimals. Using unrounded averages changes amounts slightly (e.g., about 29.52 USD on January 2018).
 
 ## Data dictionary
 
-Fields used in the analysis. Missing values verified on the downloaded files (2026-10-08).
-
+Fields used in the analysis and in the data-quality checks. 
 | Field | Table | Meaning | Type | Missing values |
 |---|---|---|---|---|
 | order_id | orders | unique order identifier | text | none |
 | customer_id | orders | links each order to its customer row | text | none |
 | order_status | orders | order state (delivered, shipped, canceled, …) | text | none |
 | order_purchase_timestamp | orders | when the customer placed the order | timestamp | none |
+| order_approved_at | orders | payment approval timestamp | timestamp | 160 |
+| order_delivered_carrier_date | orders | when the order was handed to the carrier | timestamp | 1,783 |
 | order_delivered_customer_date | orders | when the order reached the customer | timestamp | 2,965 (mostly not delivered) |
 | order_estimated_delivery_date | orders | delivery date promised to the customer | timestamp | none |
 | customer_id | customers | order-level customer key (one per order) | text | none |
@@ -49,14 +75,21 @@ Fields used in the analysis. Missing values verified on the downloaded files (20
 | product_id | order_items | product sold | text | none |
 | price | order_items | item price, shipping excluded (BRL) | decimal | none |
 | freight_value | order_items | shipping amount recorded for the item (BRL) | decimal | none |
+| shipping_limit_date | order_items | shipping deadline for the item | timestamp | none |
 | order_id | order_payments | order that was paid | text | none |
+| payment_sequential | order_payments | payment number within the order | integer | none |
+| payment_type | order_payments | payment method (credit card, boleto, voucher, debit card) | text | none |
+| payment_installments | order_payments | number of installments | integer | none |
 | payment_value | order_payments | amount of this payment (BRL) | decimal | none |
 | review_id | order_reviews | review identifier | text | none |
 | order_id | order_reviews | order reviewed | text | none |
 | review_score | order_reviews | score from 1 to 5 | integer | none |
-| review_creation_date | order_reviews | date the review was created | date | none |
-| review_answer_timestamp | order_reviews | when the review was answered | timestamp | none |
+| review_creation_date | order_reviews | date the satisfaction survey was sent to the customer | date | none |
+| review_answer_timestamp | order_reviews | date of the answer to the satisfaction survey | timestamp | none |
+| review_comment_title | order_reviews | optional comment title | text | 87,656 |
+| review_comment_message | order_reviews | customer comment (not used for scores) | text | 58,247 |
 | product_id | products | product identifier | text | none |
 | product_category_name | products | category name in Portuguese | text | 610 |
+| product_weight_g | products | product weight in grams | integer | 2 |
 | product_category_name | translation | category key in Portuguese | text | none |
 | product_category_name_english | translation | category name in English | text | none |
