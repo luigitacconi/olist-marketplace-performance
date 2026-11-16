@@ -1,10 +1,10 @@
 # Methodology — Olist Marketplace Performance
 
-> Status: living document — updated 2026-10-31
+> Status: living document — updated 2026-11-16
 
 ## Project overview
 
-Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Olist** (Kaggle): about 100,000 anonymized orders from 2016 to 2018, in several linked tables (orders, items, payments, reviews, products, customers). Tools: Python/pandas.
+Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Olist** (Kaggle): about 100,000 anonymized orders from 2016 to 2018, in several linked tables (orders, items, payments, reviews, products, customers). Tools: Python/pandas and SQL with DuckDB. Both stages share the core definitions below and provide complementary breakdowns.
 
 ## Simulated business brief
 
@@ -24,6 +24,7 @@ Independent portfolio project on the **Brazilian E-Commerce Public Dataset by Ol
 - The shipping amount recorded on the order is not the real shipping cost.
 - We do not calculate profit, ROI or savings.
 - Late deliveries and low reviews may be linked, but the data cannot prove the delay is the cause.
+- **SQL output naming:** in the SQL output, `item_value` is merchandise value in BRL, `freight` is the recorded freight amount, and `total_value` is their sum. Payment totals are reported separately as a data check.
 
 ## Data source
 
@@ -37,18 +38,18 @@ Missing values, anomalies and the main analysis period are documented in `data_q
 ## Populations and definitions
 
 - **Sales population:** delivered orders in the main period (2017-01 → 2018-08) — **96,211 orders**. The sales summary also shows 96,478 delivered orders across the full dataset as context, clearly labelled.
-- **Service population:** delivered orders in the main period with an actual delivery date — **96,203 deliveries**. Orders marked delivered without a delivery date are excluded from delivery-time and punctuality indicators.
+- **Service population:** delivered orders in the main period with an actual delivery date — **96,203 deliveries**. Orders marked delivered without a delivery date are excluded from delivery-time and punctuality indicators. Punctuality indicators also require the promised date; in this dataset it is always present, so the population stays 96,203. Delivery time uses the purchase and delivery timestamps.
 - **Experience population:** evaluable deliveries matched to one review per order — **95,560 deliveries**.
 - **One review per order:** when an order has several reviews, keep the most recent by answer timestamp, then creation date, then review_id (missing dates last).
 - **Low score:** a review score of **1 or 2**.
-- **State comparison:** a state enters the punctuality-vs-score table only with at least **100 reviews in each group** (on time and late).
-- **Time measures:** delivery time is counted in whole 24-hour days between purchase and delivery; punctuality compares **calendar dates** (delivered date vs estimated date).
-- **Reviews before delivery:** reviews answered before the delivery date (4,648; 4,471 in late orders) are kept and reported separately, because they can express the wait itself rather than the final experience.
-- **Category counts:** orders per category are not additive — one order can contain items from different categories; only the merchandise value is additive.
+- **State comparison:** in the pandas table, a state enters the punctuality-vs-score comparison only with at least **100 reviews in each group** (on time and late).
+- **Time measures:** delivery time is counted in whole 24-hour days between purchase and delivery; punctuality compares **calendar dates** (delivered date vs estimated date). Monthly groups use the month in which the order was placed. Signed days vs the promised date are used in the SQL delivery block: negative values are early deliveries, positive values are late; delay distributions use only late deliveries.
+- **Reviews before delivery:** reviews answered before the recorded delivery timestamp (4,648; 4,471 in late orders) are kept and reported separately, because they can express the wait itself rather than the final experience. Both programs also show the overall summary; the complementary group includes answers at the delivery moment or after.
+- **Category sums:** merchandise value and recorded freight are both additive by category, because both are attributed to the item rows; order counts per category are not additive, because one order can contain items from different categories.
 
 ## Currency conversion (USD)
 
-Analysis values stay in **BRL** (the dataset currency); USD figures are a declared derived view.
+Analysis values stay in **BRL** (the dataset currency); USD figures are a declared derived view. The USD view is produced in the pandas stage.
 
 - **Source:** Banco Central do Brasil (BCB), public API, SGS series **PTAX 1** (US dollar, selling rate, daily), retrieved on **2026-10-20** from `https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados`.
 - **Convention:** semester average of the daily quotations; USD-per-BRL rate = 1 / average PTAX; `usd_value_semester = order_value × rate`, rounded to two decimals. Semesters: 2016-07, 2017-01, 2017-07, 2018-01, 2018-07 (rates stored in `Pandas_Analysis/convert_semester_currencies.py`).

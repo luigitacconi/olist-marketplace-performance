@@ -11,12 +11,13 @@ Independent e-commerce analytics project on the Olist Brazilian E-Commerce publi
 **Data source:** [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) — CC BY-NC-SA 4.0.
 Raw files are not included in this repository; see [`data/README.txt`](data/README.txt) for download instructions.
 
-**Stack:** Python/pandas.
+**Stack:** Python/pandas and SQL (DuckDB).
 
 ## Repository structure
 
 ```
 Pandas_Analysis/     Python verification scripts and the three analyses (sales, service, experience)
+sql_Analysis/        SQL stage with DuckDB runner, analytical tables and queries
 data/               Download instructions (raw files stay local)
 docs/               Methodology, data quality report, data source and license
 ```
@@ -55,6 +56,21 @@ Each script runs from the repository root:
 python Pandas_Analysis/sales_analysis.py
 ```
 
+## SQL stage
+
+The SQL stage shares the core order population, merchandise value, delivery and review definitions with the pandas analysis. It also reports freight, category concentration and delay distributions. The USD view and the state-level review comparison are available in the pandas scripts.
+
+Follow [Setup](#setup) and download the Olist files into `data/raw/` as described in [data/README.txt](data/README.txt). Then run the command below from the repository root.
+
+```powershell
+python sql_Analysis/run_sql.py
+```
+
+The runner imports the source CSVs, builds `clean_orders` (one row per order) and `clean_items` (one row per item), prints the checks and ten query results, and exports the clean tables. It regenerates `data/olist.duckdb`, `data/clean_orders.csv` and `data/clean_items.csv` locally.
+
+- `sql_Analysis/create_tables.sql` builds and checks the analytical tables.
+- `sql_Analysis/analysis.sql` contains nine analysis blocks and ten queries, including the size and distribution of delivery delays.
+
 ## Setup
 
 ```powershell
@@ -65,4 +81,4 @@ pip install -r requirements.txt
 
 ## Status
 
-Data quality verified; the three analyses are available in `Pandas_Analysis/`.
+Data quality verified; the three analyses are available in `Pandas_Analysis/`. The SQL stage builds the analytical tables and runs ten queries across nine analysis blocks.

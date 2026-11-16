@@ -1,10 +1,12 @@
 data/raw/
+data/*.csv
 .venv/
 _jev-in-pausa/
 studio-back-front-end/
 __pycache__/
 .ipynb_checkpoints/
 *.duckdb
+*.duckdb.wal
 *.db
 .env
 Thumbs.db
