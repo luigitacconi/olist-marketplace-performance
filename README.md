@@ -18,6 +18,7 @@ Raw files are not included in this repository; see [`data/README.txt`](data/READ
 ```
 Pandas_Analysis/     Python verification scripts and the three analyses (sales, service, experience)
 sql_Analysis/        SQL stage with DuckDB runner, analytical tables and queries
+Excel_Analysis/      Excel check workbook (embedded data copy and formulas)
 data/               Download instructions (raw files stay local)
 docs/               Methodology, data quality report, data source and license
 ```
@@ -71,6 +72,21 @@ The runner imports the source CSVs, builds `clean_orders` (one row per order) an
 - `sql_Analysis/create_tables.sql` builds and checks the analytical tables.
 - `sql_Analysis/analysis.sql` contains nine analysis blocks and ten queries, including the size and distribution of delivery delays.
 
+## Excel check
+
+`Excel_Analysis/check_Olist.xlsx` embeds a copy of the orders and items tables from the source CSVs. The items sheet adds two columns — order status and purchase date — matched by `order_id` when the file was built. The Check sheet recomputes the key numbers with Excel formulas (`COUNTIFS`, `SUMIFS`) on these internal sheets:
+
+| check | value |
+|---|---:|
+| orders | 99,441 |
+| items | 112,650 |
+| delivered orders in the main period | 96,211 |
+| merchandise value in the main period | 13,181,027.13 BRL |
+| delivered orders placed in Nov 2017 | 7,289 |
+| merchandise value of those orders | 987,765.37 BRL |
+
+The workbook is a derivative of the dataset and is shared under CC BY-NC-SA 4.0; the original CSV files are downloaded from Kaggle (see [`docs/data_source_and_license.md`](docs/data_source_and_license.md)).
+
 ## Setup
 
 ```powershell
@@ -81,4 +97,4 @@ pip install -r requirements.txt
 
 ## Status
 
-Data quality verified; the three analyses are available in `Pandas_Analysis/`. The SQL stage builds the analytical tables and runs ten queries across nine analysis blocks.
+Data quality verified; the three analyses are available in `Pandas_Analysis/`. The SQL stage builds the analytical tables and runs ten queries across nine analysis blocks. The Excel check reproduces the key numbers from an embedded copy of the source data.

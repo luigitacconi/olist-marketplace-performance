@@ -22,6 +22,8 @@ The raw dataset files are NOT included in this repository.
 
 3) Licence: CC BY-NC-SA 4.0.
    See docs/data_source_and_license.md for conditions and notes.
-   The dataset is not redistributed here; always download it from the official source.
+   The original CSV files are not redistributed here; always download them from the official source.
+   The Excel workbook in Excel_Analysis/ embeds copies of the orders and items tables
+   (derivative work, CC BY-NC-SA 4.0; see docs/data_source_and_license.md).
 
 Note: the local database file data/olist.duckdb is not committed.

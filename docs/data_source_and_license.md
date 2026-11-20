@@ -5,7 +5,7 @@
 - **Version:** current Kaggle version (no. 2), last updated 2021-10-01
 - **Raw files:** the nine CSV files kept in `data/raw/` — not committed to Git (see `.gitignore` and `data/README.txt` for download instructions)
 - **License:** CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/
-- **Redistribution:** the dataset is not redistributed in this repository; download it from the official source.
+- **Redistribution:** the source CSV files are not committed to this repository; download them from the official source. The Excel workbook `Excel_Analysis/check_Olist.xlsx` embeds copies of the complete orders and items tables; it is a derivative of the dataset and is shared under **CC BY-NC-SA 4.0** (attribution: Brazilian E-Commerce Public Dataset by Olist / Kaggle), for non-commercial use and under the same license.
 
 ## License conditions
 

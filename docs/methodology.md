@@ -1,6 +1,6 @@
 # Methodology — Olist Marketplace Performance
 
-> Status: living document — updated 2026-11-16
+> Status: living document — updated 2026-11-20
 
 ## Project overview
 
@@ -34,6 +34,10 @@ Download instructions: `data/README.txt`; licence details: `data_source_and_lice
 ## Data quality
 
 Missing values, anomalies and the main analysis period are documented in `data_quality.md`; every number there is reproduced by the scripts in `Pandas_Analysis/` (run `run_checks.py`).
+
+## Excel check
+
+The key numbers are also recomputed in Excel in `Excel_Analysis/check_Olist.xlsx`. The workbook embeds a copy of the orders and items tables; the items sheet adds two columns (order status and purchase date, matched by `order_id` when the file was built). The Check sheet uses `COUNTIFS` and `SUMIFS` on these internal sheets and matches the SQL and pandas values with a zero difference. The workbook is a derivative of the dataset and is shared under CC BY-NC-SA 4.0 (see `data_source_and_license.md`).
 
 ## Populations and definitions
 
