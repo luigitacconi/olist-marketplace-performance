@@ -5,19 +5,6 @@ from convert_dates import convert_dates
 from convert_semester_currencies import semester_currency_variation, month_to_semester
 
 
-orders = load("olist_orders_dataset.csv")
-order_items = load("olist_order_items_dataset.csv")
-order_reviews = load("olist_order_reviews_dataset.csv")
-products = load("olist_products_dataset.csv")
-translation = load("product_category_name_translation.csv")
-customers = load("olist_customers_dataset.csv")
-
-orders = convert_dates(orders)
-order_items = convert_dates(order_items)
-
-orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
-
-
 def filter_valid_orders(orders):
     return orders[(orders["order_status"] == "delivered")
                   & (orders["month"] >= "2017-01")
@@ -120,10 +107,26 @@ def orders_by_state(orders, customers, order_items):
     return table
 
 
-print_orders_sales_table(orders, order_items)
-print()
-count_product_categories(products, translation)
-print()
-print(sales_by_category(orders, order_items, products, translation).head(10))
-print()
-print(orders_by_state(orders, customers, order_items).to_string())
+def main():
+    orders = load("olist_orders_dataset.csv")
+    order_items = load("olist_order_items_dataset.csv")
+    products = load("olist_products_dataset.csv")
+    translation = load("product_category_name_translation.csv")
+    customers = load("olist_customers_dataset.csv")
+
+    orders = convert_dates(orders)
+    order_items = convert_dates(order_items)
+
+    orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
+
+    print_orders_sales_table(orders, order_items)
+    print()
+    count_product_categories(products, translation)
+    print()
+    print(sales_by_category(orders, order_items, products, translation).head(10))
+    print()
+    print(orders_by_state(orders, customers, order_items).to_string())
+
+
+if __name__ == "__main__":
+    main()

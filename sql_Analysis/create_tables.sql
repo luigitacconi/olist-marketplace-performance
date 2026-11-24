@@ -6,8 +6,8 @@ CREATE OR REPLACE TABLE temp_items_per_order AS
 select
 	order_id,
 	COUNT(*) AS items_count,
-	SUM(price) AS item_value_sum,
-	SUM(freight_value) AS freight_sum,
+	CAST(SUM(CAST(price AS DECIMAL(18,2))) AS DECIMAL(18,2)) AS item_value_sum,
+	CAST(SUM(CAST(freight_value AS DECIMAL(18,2))) AS DECIMAL(18,2)) AS freight_sum,
 	COUNT(*) FILTER (WHERE price IS NULL OR price < 0) AS invalid_price_count
 from raw_order_items
 group by order_id;
@@ -17,7 +17,7 @@ CREATE OR REPLACE TABLE temp_payments_per_order AS
 select
 	order_id,
 	COUNT(*) AS payments_count,
-	SUM(payment_value) AS payment_value_sum
+	CAST(SUM(CAST(payment_value AS DECIMAL(18,2))) AS DECIMAL(18,2)) AS payment_value_sum
 from raw_order_payments
 group by order_id;
 
@@ -84,8 +84,8 @@ select
 	oi.product_id,
 	oi.seller_id,
 	oi.shipping_limit_date,
-	oi.price,
-	oi.freight_value,
+	CAST(oi.price AS DECIMAL(18,2)) AS price,
+	CAST(oi.freight_value AS DECIMAL(18,2)) AS freight_value,
 	o.order_purchase_timestamp AS purchase_timestamp,
 	o.order_status,
 	c.customer_state,

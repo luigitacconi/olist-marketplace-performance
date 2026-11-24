@@ -24,7 +24,7 @@ Raw files are never modified; every anomaly is either a single-indicator exclusi
 - `order_delivered_customer_date`: 2,965 missing — 2,957 of them are non-delivered orders; **8 are marked `delivered`** (see §4).
 - `order_approved_at`: 160 missing — 141 `canceled` (approval date absent), 14 `delivered`, 5 `created`.
 - Review comments are mostly empty (not used in the analysis); review scores are always present, range 1–5.
-- `product_category_name`: 610 missing → labelled **`unknown`** in the analysis.
+- `product_category_name`: 610 missing → labelled **`Unknown`** in the analysis.
 - Rule: a missing value stays missing — it is never replaced by zero or by another date.
 
 ## 4. Anomalies (quantified and classified)

@@ -4,13 +4,6 @@ from files import load
 from convert_dates import convert_dates
 
 
-orders = load("olist_orders_dataset.csv")
-customers = load("olist_customers_dataset.csv")
-
-orders = convert_dates(orders)
-orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
-
-
 def evaluable_deliveries(orders):
     return orders[(orders["order_status"] == "delivered")
                   & orders["order_delivered_customer_date"].notna()
@@ -77,7 +70,18 @@ def deliveries_by_month(table):
     print(month_table.to_string())
 
 
-table_to_evaluate = add_delay(evaluable_deliveries(orders))
-summarize_deliveries(table_to_evaluate)
-deliveries_by_state(table_to_evaluate, customers)
-deliveries_by_month(table_to_evaluate)
+def main():
+    orders = load("olist_orders_dataset.csv")
+    customers = load("olist_customers_dataset.csv")
+
+    orders = convert_dates(orders)
+    orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
+
+    table_to_evaluate = add_delay(evaluable_deliveries(orders))
+    summarize_deliveries(table_to_evaluate)
+    deliveries_by_state(table_to_evaluate, customers)
+    deliveries_by_month(table_to_evaluate)
+
+
+if __name__ == "__main__":
+    main()

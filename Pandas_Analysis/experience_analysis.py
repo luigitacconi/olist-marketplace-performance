@@ -4,15 +4,6 @@ from files import load
 from convert_dates import convert_dates
 
 
-orders = load("olist_orders_dataset.csv")
-reviews = load("olist_order_reviews_dataset.csv")
-customers = load("olist_customers_dataset.csv")
-
-orders = convert_dates(orders)
-reviews = convert_dates(reviews)
-orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
-
-
 def evaluable_deliveries(orders):
     return orders[(orders["order_status"] == "delivered")
                   & orders["order_delivered_customer_date"].notna()
@@ -97,7 +88,20 @@ def punctuality_scores_by_state(base, customers):
     print(table.to_string())
 
 
-table = add_delay(evaluable_deliveries(orders))
-unique_reviews = one_review_per_order(reviews)
-base = summarize_punctuality_scores(table, unique_reviews)
-punctuality_scores_by_state(base, customers)
+def main():
+    orders = load("olist_orders_dataset.csv")
+    reviews = load("olist_order_reviews_dataset.csv")
+    customers = load("olist_customers_dataset.csv")
+
+    orders = convert_dates(orders)
+    reviews = convert_dates(reviews)
+    orders["month"] = orders["order_purchase_timestamp"].dt.strftime("%Y-%m")
+
+    table = add_delay(evaluable_deliveries(orders))
+    unique_reviews = one_review_per_order(reviews)
+    base = summarize_punctuality_scores(table, unique_reviews)
+    punctuality_scores_by_state(base, customers)
+
+
+if __name__ == "__main__":
+    main()
